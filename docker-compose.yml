@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  cotacaodolar-database:
+    image: mongo:latest
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+
+  cotacaodolar-cache:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  cotacaodolar-api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: cotacaodolar-api
+    depends_on:
+      - cotacaodolar-database
+      - cotacaodolar-cache
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://cotacaodolar-database:27017/cotacaodolar
+      SPRING_REDIS_HOST: cotacaodolar-cache
+      SPRING_REDIS_PORT: 6379
+      API_KEY_NAME: X-API-KEY
+      API_KEY_VALUE: teste
+    ports:
+      - "8080:8080"
+    links:
+      - cotacaodolar-database
+      - cotacaodolar-cache
+
+volumes:
+  mongodb_data:
+  redis_data:
