@@ -1,4 +1,4 @@
-# service--cotacao-dolar
+# service--cotacaodolar
 
 API para proporcionar uma interface para obtenção de cotações do dólar comercial em datas específicas.
 
@@ -24,11 +24,6 @@ API para proporcionar uma interface para obtenção de cotações do dólar come
 
 ## Documentação
 A aplicação está documentada via swagger, podendo ser acessada em:
-
-#### Remotamente
-A api está publicada em:
-- https://service--cotacao-dolar.herokuapp.com/swagger-ui/index.html
-
 
 #### Local
 - http://localhost:8080/swagger-ui.html
