@@ -1,0 +1,65 @@
+# INFO
+info:
+  app:
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+    encoding: @project.build.sourceEncoding@
+    java:
+      version: @java.version@
+
+# SERVER
+server:
+  port: 8080
+
+# SPRING
+spring:
+  application:
+    name: @project.name@
+  output:
+    ansi:
+      enabled: always
+  main:
+    lazy-initialization: true
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/cotacaodolar}
+      auto-index-creation: true
+  redis:
+    client-name: @project.name@
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
+    password: ${SPRING_REDIS_PASSWORD:}
+    ssl: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+#FEIGN
+feign:
+  client:
+    config:
+      default:
+        readTimeout: '60000'
+        connectTimeout: '60000'
+        loggerLevel: FULL
+
+# SEGURANÇA
+cotacaodolar:
+  api-key: ${COTACAODOLAR_API_KEY}
+
+# API EXTERNA - BCB
+bacen:
+  url: ${BACEN_URL:https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata}
+
+# ACTUATOR
+management:
+  endpoint:
+    health:
+      show-details: never
+    metrics:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: info, health
