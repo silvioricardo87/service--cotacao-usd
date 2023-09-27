@@ -77,11 +77,6 @@ class CotacaoDolarUseCaseTest {
 
     when(cotacoesDolarRepository.findByDataHoraCotacao("2023-09-27")).thenReturn(Optional.of(cotacaoDolarEntity));
 
-    CotacaoDolar mockCotacaoDolar = new CotacaoDolar();
-    mockCotacaoDolar.setId("651485ee9208806c3eeca882");
-    mockCotacaoDolar.setCotacaoCompra(4.9125);
-    mockCotacaoDolar.setCotacaoVenda(4.9131);
-
     ResponseEntity<CotacaoDolar> cotacaoDolar = cotacaoDolarUseCase.getCotacao("2023-09-27");
 
     assertEquals("651485ee9208806c3eeca882", Objects.requireNonNull(cotacaoDolar.getBody()).getId());
