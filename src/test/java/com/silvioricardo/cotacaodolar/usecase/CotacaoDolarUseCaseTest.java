@@ -12,6 +12,7 @@ import com.silvioricardo.cotacaodolar.domain.dto.bacen.CotacaoDolarResponseDto;
 import com.silvioricardo.cotacaodolar.domain.entities.CotacaoDolarEntity;
 import com.silvioricardo.cotacaodolar.domain.model.CotacaoDolar;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class CotacaoDolarUseCaseTest {
@@ -59,9 +61,9 @@ class CotacaoDolarUseCaseTest {
 
     when(objectMapper.convertValue(cacheCotacaoDolar, CotacaoDolar.class)).thenReturn(cacheCotacaoDolar);
 
-    CotacaoDolar cotacaoDolar = cotacaoDolarUseCase.getCotacao("2023-09-22");
+    ResponseEntity<CotacaoDolar> cotacaoDolar = cotacaoDolarUseCase.getCotacao("2023-09-22");
 
-    assertEquals(cacheCotacaoDolar, cotacaoDolar);
+    assertEquals(cacheCotacaoDolar, cotacaoDolar.getBody());
   }
 
   @Test
@@ -80,11 +82,11 @@ class CotacaoDolarUseCaseTest {
     mockCotacaoDolar.setCotacaoCompra(4.9125);
     mockCotacaoDolar.setCotacaoVenda(4.9131);
 
-    CotacaoDolar cotacaoDolar = cotacaoDolarUseCase.getCotacao("2023-09-27");
+    ResponseEntity<CotacaoDolar> cotacaoDolar = cotacaoDolarUseCase.getCotacao("2023-09-27");
 
-    assertEquals("651485ee9208806c3eeca882", cotacaoDolar.getId());
-    assertEquals(4.9125, cotacaoDolar.getCotacaoCompra());
-    assertEquals(4.9131, cotacaoDolar.getCotacaoVenda());
+    assertEquals("651485ee9208806c3eeca882", Objects.requireNonNull(cotacaoDolar.getBody()).getId());
+    assertEquals(4.9125, cotacaoDolar.getBody().getCotacaoCompra());
+    assertEquals(4.9131, cotacaoDolar.getBody().getCotacaoVenda());
   }
 
   @Test
@@ -107,11 +109,10 @@ class CotacaoDolarUseCaseTest {
     cotacaoDolarEntity.setCotacaoVenda(4.9131);
     when(cotacoesDolarRepository.save(any())).thenReturn(cotacaoDolarEntity);
 
-    CotacaoDolar cotacaoDolar = cotacaoDolarUseCase.getCotacao("2023-09-27");
+    ResponseEntity<CotacaoDolar> cotacaoDolar = cotacaoDolarUseCase.getCotacao("2023-09-27");
 
-    assertEquals("651485ee9208806c3eeca882", cotacaoDolar.getId());
-    assertEquals(4.9125, cotacaoDolar.getCotacaoCompra());
-    assertEquals(4.9131, cotacaoDolar.getCotacaoVenda());
+    assertEquals("651485ee9208806c3eeca882", Objects.requireNonNull(cotacaoDolar.getBody()).getId());
+    assertEquals(4.9125, cotacaoDolar.getBody().getCotacaoCompra());
+    assertEquals(4.9131, cotacaoDolar.getBody().getCotacaoVenda());
   }
-
 }

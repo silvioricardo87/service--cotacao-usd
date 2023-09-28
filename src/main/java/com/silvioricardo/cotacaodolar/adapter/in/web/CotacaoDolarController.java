@@ -5,7 +5,7 @@ import com.silvioricardo.cotacaodolar.domain.model.CotacaoDolar;
 import com.silvioricardo.cotacaodolar.usecase.CotacaoDolarUseCase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,12 +17,13 @@ public class CotacaoDolarController implements CotacaoDolarApi {
   }
 
   @Override
-  public CotacaoDolar getCotacao(String data) {
-    return cotacaoDolarUseCase.getCotacao(data);
-  }
+  public ResponseEntity<Object> getCotacao(String data, Pageable pageable, Integer page, Integer size, String sort){
+    if(data == null) {
+      Page<CotacaoDolar> cotacoes = cotacaoDolarUseCase.getCotacoes(pageable);
+      return ResponseEntity.ok().body(cotacoes.getContent());
 
-  @Override
-  public Page<CotacaoDolar> getCotacoes(@PageableDefault(size = 20) Pageable pageable) {
-    return cotacaoDolarUseCase.getCotacoes(pageable);
+    }
+
+    return ResponseEntity.ok().body(cotacaoDolarUseCase.getCotacao(data).getBody());
   }
 }

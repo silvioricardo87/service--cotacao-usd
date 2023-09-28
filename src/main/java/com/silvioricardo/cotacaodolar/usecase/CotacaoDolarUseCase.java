@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,19 +33,18 @@ public class CotacaoDolarUseCase {
     this.objectMapper.registerModule(new JavaTimeModule());
   }
 
-  public CotacaoDolar getCotacao(String data) {
+  public ResponseEntity<CotacaoDolar> getCotacao(String data) {
     Object cacheCotacaoDolar = redisTemplate.opsForValue().get(data);
-    if (cacheCotacaoDolar != null) return objectMapper.convertValue(cacheCotacaoDolar, CotacaoDolar.class);
+    if (cacheCotacaoDolar != null)
+      return ResponseEntity.ok().body((objectMapper.convertValue(cacheCotacaoDolar, CotacaoDolar.class)));
 
     Optional<CotacaoDolarEntity> cotacoesDolar = cotacoesDolarRepository.findByDataHoraCotacao(data);
-    if (cotacoesDolar.isPresent()) {
-      return atualizaCache(data, cotacoesDolar.get());
-    }
 
-    return buscaCotacaoBacen(data);
+    return cotacoesDolar.map(cotacaoDolarEntity -> atualizaCache(data, cotacaoDolarEntity))
+        .orElseGet(() -> buscaCotacaoBacen(data));
   }
 
-  private CotacaoDolar buscaCotacaoBacen(String data) {
+  private ResponseEntity<CotacaoDolar> buscaCotacaoBacen(String data) {
     BacenResponseDto bacenResponseDto = bacenClient.getCotacaoDolarDia(data);
 
     if(bacenResponseDto.getValue().isEmpty())
@@ -56,10 +56,10 @@ public class CotacaoDolarUseCase {
     return atualizaCache(data, cotacaoDolarEntity);
   }
 
-  private CotacaoDolar atualizaCache(String data, CotacaoDolarEntity cotacaoDolarEntity) {
+  private ResponseEntity<CotacaoDolar> atualizaCache(String data, CotacaoDolarEntity cotacaoDolarEntity) {
     CotacaoDolar cotacaoDolar = CotacaoDolar.mapFromCotacaoDolarEntity(cotacaoDolarEntity);
     redisTemplate.opsForValue().set(data, cotacaoDolar);
-    return cotacaoDolar;
+    return ResponseEntity.ok().body(cotacaoDolar);
   }
 
   public Page<CotacaoDolar> getCotacoes(Pageable pageable) {
