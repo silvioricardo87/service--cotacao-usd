@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -53,7 +54,7 @@ class CotacaoDolarControllerTest {
     cotacaoDolar.setCotacaoVenda(4.9606);
     cotacaoDolar.setDataHoraRequisicao(LocalDateTime.parse("2023-09-27 17:41:53", dateTimeFormatter));
 
-    when(cotacaoDolarUseCase.getCotacao(anyString())).thenReturn(cotacaoDolar);
+    when(cotacaoDolarUseCase.getCotacao(anyString())).thenReturn(ResponseEntity.ok(cotacaoDolar));
 
     mockMvc.perform(get("/cotacao")
             .header(X_API_KEY_NAME, X_API_KEY_VALUE)
@@ -82,15 +83,14 @@ class CotacaoDolarControllerTest {
 
     when(cotacaoDolarUseCase.getCotacoes(any())).thenReturn(cotacoesDolar);
 
-    mockMvc.perform(get("/cotacoes")
-            .header(X_API_KEY_NAME, X_API_KEY_VALUE)
-            .param("data", "09-25-2023"))
+    mockMvc.perform(get("/cotacao")
+            .header(X_API_KEY_NAME, X_API_KEY_VALUE))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.content.[0].id", is("651493919cb6136f6f2347d1")))
-        .andExpect(jsonPath("$.content.[0].timestampRequisicao", is("2023-09-27T20:41:53.484939500Z")))
-        .andExpect(jsonPath("$.content.[0].dataHoraCotacao", is("2023-09-25 13:10:42")))
-        .andExpect(jsonPath("$.content.[0].cotacaoCompra", is(4.96)))
-        .andExpect(jsonPath("$.content.[0].cotacaoVenda", is(4.9606)))
-        .andExpect(jsonPath("$.content.[0].dataHoraRequisicao", is("2023-09-27 17:41:53")));
+        .andExpect(jsonPath("$.[0].id", is("651493919cb6136f6f2347d1")))
+        .andExpect(jsonPath("$.[0].timestampRequisicao", is("2023-09-27T20:41:53.484939500Z")))
+        .andExpect(jsonPath("$.[0].dataHoraCotacao", is("2023-09-25 13:10:42")))
+        .andExpect(jsonPath("$.[0].cotacaoCompra", is(4.96)))
+        .andExpect(jsonPath("$.[0].cotacaoVenda", is(4.9606)))
+        .andExpect(jsonPath("$.[0].dataHoraRequisicao", is("2023-09-27 17:41:53")));
   }
 }

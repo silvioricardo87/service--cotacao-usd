@@ -26,8 +26,8 @@ services:
       SPRING_DATA_MONGODB_URI: mongodb://cotacaodolar-database:27017/cotacaodolar
       SPRING_REDIS_HOST: cotacaodolar-cache
       SPRING_REDIS_PORT: 6379
-      API_KEY_NAME: X-API-KEY
-      API_KEY_VALUE: teste
+      COTACAODOLAR_API_KEY: teste
+      BACEN_URL: https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata
     ports:
       - "8080:8080"
     links:
